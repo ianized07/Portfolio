@@ -5,6 +5,10 @@ const TRAITS = [
   { icon: '🎤', title: 'Reproduction Specialist', desc: 'Not that kind. I make bugs show up every time. Consistency is key.' },
   { icon: '🧾', title: 'Detailed Bug Reports', desc: "So thorough that your grandma could fix the issue. If she knew JavaScript." },
   { icon: '💣', title: 'Breaks Things Gracefully', desc: "I don't break the app — I expose its true fragile nature." },
+  { icon: '⏱️', title: 'Time Traveler', desc: 'Can feel when a sprint is about to go off the rails. Spoiler alert: It\'s now.' },
+  { icon: '🎮', title: 'Click Accuracy', desc: 'Clicked more buttons last week than a speedrunner fighting a final boss.' },
+  { icon: '🤡', title: 'Sarcastic Comment Ninja', desc: 'Master of adding "as expected?" to screenshots with chaotic neutral energy.' },
+  { icon: '📞', title: 'Communication God-Tier', desc: 'Fluent in Cebuano Bisaya, Tagalog, English, and passive-aggressive Jira comments.' },
 ]
 
 export default function About() {
@@ -102,13 +106,6 @@ export default function About() {
               ))}
             </div>
 
-            {/* Fun quote badge */}
-            <div className="mt-4 border border-neon-purple/20 rounded bg-neon-purple/5 p-4">
-              <p className="font-mono text-xs text-neon-purple">
-                ⏱️ <strong>Time Traveler</strong> — Can feel when a sprint is about to go off
-                the rails. <span className="text-white">Spoiler alert: It's now.</span>
-              </p>
-            </div>
           </div>
         </div>
       </div>
