@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
@@ -39,12 +39,55 @@ function Portfolio() {
 }
 
 export default function App() {
+  const [scrollPct, setScrollPct]       = useState(0)
+  const [cursor, setCursor]             = useState({ x: -300, y: -300 })
+  const [cursorVisible, setCursorVisible] = useState(false)
+
+  useEffect(() => {
+    const onScroll = () => {
+      const el = document.documentElement
+      const total = el.scrollHeight - el.clientHeight
+      setScrollPct(total > 0 ? (el.scrollTop / total) * 100 : 0)
+    }
+    window.addEventListener('scroll', onScroll)
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  useEffect(() => {
+    const onMove  = (e) => { setCursor({ x: e.clientX, y: e.clientY }); setCursorVisible(true) }
+    const onLeave = () => setCursorVisible(false)
+    window.addEventListener('mousemove', onMove)
+    window.addEventListener('mouseleave', onLeave)
+    return () => {
+      window.removeEventListener('mousemove', onMove)
+      window.removeEventListener('mouseleave', onLeave)
+    }
+  }, [])
+
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Portfolio />} />
-        <Route path="/bug-report" element={<BugReportPage />} />
-      </Routes>
-    </BrowserRouter>
+    <>
+      {/* Scroll progress bar */}
+      <div
+        className="scroll-progress"
+        style={{ width: `${scrollPct}%` }}
+      />
+
+      {/* Cursor glow */}
+      <div
+        className="cursor-glow"
+        style={{
+          left: cursor.x,
+          top: cursor.y,
+          opacity: cursorVisible ? 1 : 0,
+        }}
+      />
+
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Portfolio />} />
+          <Route path="/bug-report" element={<BugReportPage />} />
+        </Routes>
+      </BrowserRouter>
+    </>
   )
 }

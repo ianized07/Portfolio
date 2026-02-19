@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 const TERMINAL_LINES = [
@@ -22,11 +22,16 @@ const TERMINAL_LINES = [
   { text: '✨ All systems operational. Bugs: 0. Dev tears: priceless.', delay: 4400, color: '#9d4edd' },
 ]
 
+const MATRIX_CHARS = '01アイウエオQABUGTESTPASSFAIL><{}[]@#$%'
+
 export default function Hero() {
   const navigate = useNavigate()
+  const canvasRef = useRef(null)
   const [visibleLines, setVisibleLines] = useState([])
-  const [showCursor, setShowCursor] = useState(true)
+  const [showCursor, setShowCursor]     = useState(true)
+  const [testsCount, setTestsCount]     = useState(0)
 
+  // Terminal lines animation
   useEffect(() => {
     const timers = TERMINAL_LINES.map((line, i) =>
       setTimeout(() => {
@@ -36,11 +41,72 @@ export default function Hero() {
     return () => timers.forEach(clearTimeout)
   }, [])
 
+  // Count-up: 0 → 47 over 1.6s
+  useEffect(() => {
+    const target   = 47
+    const duration = 1600
+    const start    = Date.now()
+    const timer = setInterval(() => {
+      const elapsed  = Date.now() - start
+      const progress = Math.min(elapsed / duration, 1)
+      const eased    = 1 - Math.pow(1 - progress, 3)
+      setTestsCount(Math.floor(eased * target))
+      if (progress >= 1) clearInterval(timer)
+    }, 16)
+    return () => clearInterval(timer)
+  }, [])
+
+  // Matrix rain canvas
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    const fontSize = 13
+    let drops = []
+
+    const init = () => {
+      canvas.width  = canvas.offsetWidth
+      canvas.height = canvas.offsetHeight
+      const cols = Math.floor(canvas.width / fontSize)
+      drops = Array.from({ length: cols }, () => Math.random() * -50)
+    }
+    init()
+
+    const onResize = () => init()
+    window.addEventListener('resize', onResize)
+
+    const interval = setInterval(() => {
+      ctx.fillStyle = 'rgba(5, 5, 5, 0.055)'
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+      ctx.font = `${fontSize}px monospace`
+      drops.forEach((y, i) => {
+        const char = MATRIX_CHARS[Math.floor(Math.random() * MATRIX_CHARS.length)]
+        const bright = Math.random() > 0.92
+        ctx.fillStyle = bright ? '#aaffcc' : '#00ff4130'
+        ctx.fillText(char, i * fontSize, y * fontSize)
+        if (y * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0
+        drops[i] += 0.5
+      })
+    }, 50)
+
+    return () => {
+      clearInterval(interval)
+      window.removeEventListener('resize', onResize)
+    }
+  }, [])
+
   return (
     <section
       id="hero"
       className="relative min-h-screen flex items-center justify-center overflow-hidden grid-bg"
     >
+      {/* Matrix rain canvas */}
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full pointer-events-none"
+        style={{ opacity: 0.18, zIndex: 0 }}
+      />
+
       {/* Ambient glow blobs */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-neon-green/5 blur-3xl pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-neon-cyan/5 blur-3xl pointer-events-none" />
@@ -60,7 +126,7 @@ export default function Hero() {
               <h1 className="text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight">
                 Cliff Ian
                 <br />
-                <span className="text-neon-green glow-green animate-glow-pulse">Murillo</span>
+                <span className="text-neon-green glitch">Murillo</span>
               </h1>
             </div>
 
@@ -84,7 +150,7 @@ export default function Hero() {
             {/* Stats row */}
             <div className="flex gap-6 pt-2" style={{ animation: 'fadeUp 0.7s ease-out 0.7s forwards', opacity: 0 }}>
               {[
-                { val: '47+', label: 'Tests Written' },
+                { val: `${testsCount}+`, label: 'Tests Written' },
                 { val: '0', label: 'Bugs Escaped' },
                 { val: '∞', label: 'Coffee Consumed' },
               ].map(({ val, label }) => (
