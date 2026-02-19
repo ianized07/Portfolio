@@ -15,7 +15,7 @@ const STACK = [
   { name: 'Node.js Protractor', icon: '🔬', color: '#e23237', desc: 'E2E testing framework for Angular apps' },
 ]
 
-const FAMILIAR = ['Playwright', 'Cypress', 'Jenkins', 'Docker', 'REST APIs', 'SQL', 'JavaScript', 'React', 'HP ALM', 'TestNG']
+const FAMILIAR = ['Playwright', 'Cypress', 'REST APIs', 'SQL', 'JavaScript', 'React', 'WSL2']
 
 export default function TechStack() {
   return (

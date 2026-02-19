@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const TERMINAL_LINES = [
   { text: '$ qa-runner --suite=all --env=production', delay: 0, color: '#00ff41' },
@@ -22,6 +23,7 @@ const TERMINAL_LINES = [
 ]
 
 export default function Hero() {
+  const navigate = useNavigate()
   const [visibleLines, setVisibleLines] = useState([])
   const [showCursor, setShowCursor] = useState(true)
 
@@ -95,9 +97,13 @@ export default function Hero() {
 
             {/* CTAs */}
             <div className="flex gap-4 pt-2" style={{ animation: 'fadeUp 0.7s ease-out 0.9s forwards', opacity: 0 }}>
-              <a href="#projects" className="btn-neon btn-neon-filled text-sm">
-                View Projects
-              </a>
+              <button
+                onClick={() => navigate('/bug-report')}
+                className="btn-neon btn-neon-filled text-sm"
+                title="View Projects"
+              >
+                Veiw Projeects
+              </button>
               <a
                 href="https://github.com/ianized07"
                 target="_blank"
