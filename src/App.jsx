@@ -82,6 +82,31 @@ export default function App() {
         }}
       />
 
+      {/* Back-to-top button */}
+      <button
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        aria-label="Back to top"
+        className="btn-neon"
+        style={{
+          position: 'fixed',
+          bottom: '2rem',
+          right: '2rem',
+          zIndex: 9990,
+          width: '2.5rem',
+          height: '2.5rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '1rem',
+          padding: 0,
+          opacity: scrollPct > 15 ? 1 : 0,
+          pointerEvents: scrollPct > 15 ? 'auto' : 'none',
+          transition: 'opacity 0.3s ease',
+        }}
+      >
+        ↑
+      </button>
+
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Portfolio />} />

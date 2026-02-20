@@ -23,6 +23,7 @@ const TERMINAL_LINES = [
 ]
 
 const MATRIX_CHARS = '01アイウエオQABUGTESTPASSFAIL><{}[]@#$%'
+const ROLES = ['QA Engineer', 'Bug Whisperer', 'Code Tormentor']
 
 export default function Hero() {
   const navigate = useNavigate()
@@ -30,6 +31,27 @@ export default function Hero() {
   const [visibleLines, setVisibleLines] = useState([])
   const [showCursor, setShowCursor]     = useState(true)
   const [testsCount, setTestsCount]     = useState(0)
+  const [roleIdx, setRoleIdx]           = useState(0)
+  const [roleText, setRoleText]         = useState('')
+  const [deleting, setDeleting]         = useState(false)
+
+  // Cycling typewriter subtitle
+  useEffect(() => {
+    const current = ROLES[roleIdx]
+    if (!deleting && roleText === current) {
+      const t = setTimeout(() => setDeleting(true), 2000)
+      return () => clearTimeout(t)
+    }
+    if (deleting && roleText === '') {
+      setDeleting(false)
+      setRoleIdx((i) => (i + 1) % ROLES.length)
+      return
+    }
+    const t = setTimeout(() => {
+      setRoleText((s) => deleting ? s.slice(0, -1) : current.slice(0, s.length + 1))
+    }, deleting ? 45 : 90)
+    return () => clearTimeout(t)
+  }, [roleText, deleting, roleIdx])
 
   // Terminal lines animation
   useEffect(() => {
@@ -131,12 +153,9 @@ export default function Hero() {
             </div>
 
             <div style={{ animation: 'fadeUp 0.7s ease-out 0.4s forwards', opacity: 0 }}>
-              <p className="font-mono text-lg text-neon-cyan">
-                QA Engineer
-                <span className="text-gray-500 mx-2">/</span>
-                Bug Whisperer
-                <span className="text-gray-500 mx-2">/</span>
-                <span className="text-neon-pink">Code Tormentor</span>
+              <p className="font-mono text-lg text-neon-cyan h-7 flex items-center gap-1">
+                <span>{roleText}</span>
+                <span className="inline-block w-0.5 h-5 bg-neon-cyan" style={{ animation: 'blink 1s step-end infinite' }} />
               </p>
             </div>
 

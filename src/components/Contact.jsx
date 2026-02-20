@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import emailjs from '@emailjs/browser'
 
 const LINKS = [
@@ -35,7 +35,15 @@ export default function Contact() {
   const [error, setError]         = useState('')
   const [form, setForm]           = useState({ name: '', email: '', message: '' })
   const [focused, setFocused]     = useState(null)
+  const [copied, setCopied]       = useState('')
   const formRef = useRef(null)
+
+  const copyToClipboard = useCallback((text, key) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(key)
+      setTimeout(() => setCopied(''), 1800)
+    })
+  }, [])
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -96,6 +104,15 @@ export default function Contact() {
                     >
                       {icon} {value}
                     </a>
+                    {href.startsWith('http') && (
+                      <button
+                        onClick={() => copyToClipboard(href, label)}
+                        className="font-mono text-gray-700 hover:text-neon-green transition-colors duration-200 text-xs ml-auto"
+                        title="Copy to clipboard"
+                      >
+                        {copied === label ? '✓ copied' : '⎘'}
+                      </button>
+                    )}
                   </div>
                 ))}
                 <br />

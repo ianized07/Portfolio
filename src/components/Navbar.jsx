@@ -8,13 +8,31 @@ const links = [
 ]
 
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false)
-  const [menuOpen, setMenuOpen] = useState(false)
+  const [scrolled, setScrolled]       = useState(false)
+  const [menuOpen, setMenuOpen]       = useState(false)
+  const [activeSection, setActive]    = useState('hero')
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
     window.addEventListener('scroll', onScroll)
     return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  useEffect(() => {
+    const ids = ['hero', 'about', 'skills', 'stack', 'contact']
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActive(entry.target.id)
+        })
+      },
+      { threshold: 0.35 }
+    )
+    ids.forEach((id) => {
+      const el = document.getElementById(id)
+      if (el) observer.observe(el)
+    })
+    return () => observer.disconnect()
   }, [])
 
   return (
@@ -36,7 +54,16 @@ export default function Navbar() {
         {/* Desktop links */}
         <div className="hidden md:flex items-center gap-8">
           {links.map((l) => (
-            <a key={l.href} href={l.href} className="nav-link">
+            <a
+              key={l.href}
+              href={l.href}
+              className={`nav-link transition-all duration-200 ${
+                activeSection === l.href.slice(1)
+                  ? 'text-neon-green'
+                  : ''
+              }`}
+              style={activeSection === l.href.slice(1) ? { textShadow: '0 0 8px #00ff41' } : {}}
+            >
               {l.label}
             </a>
           ))}
